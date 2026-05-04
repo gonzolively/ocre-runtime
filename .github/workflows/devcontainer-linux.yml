@@ -49,7 +49,14 @@ jobs:
     if: ${{ needs.necessary.outputs.build == 'true' }}
     needs:
       - necessary
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - platform: "amd64"
+            runner: ubuntu-24.04
+          - platform: "arm64"
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Checkout the code
@@ -72,4 +79,29 @@ jobs:
           file: .devcontainer/linux/Dockerfile
           target: ocre-ci
           push: true
-          tags: ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}
+          tags: ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}-${{ matrix.platform }}
+
+  manifest:
+    if: needs.necessary.outputs.build == 'true'
+    needs:
+      - necessary
+      - build-push
+    name: Docker manifest
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Login to Github Registry
+        uses: docker/login-action@v4
+        with:
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          registry: ghcr.io
+
+      - name: Create and push multiarch manifests
+        run: |
+          docker manifest rm ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }} || true
+          docker manifest create \
+            ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }} \
+            ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}-amd64 \
+            ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}-arm64
+          docker manifest push ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}
