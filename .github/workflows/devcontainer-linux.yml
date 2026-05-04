@@ -79,6 +79,7 @@ jobs:
           file: .devcontainer/linux/Dockerfile
           target: ocre-ci
           push: true
+          provenance: false
           tags: ghcr.io/${{ github.repository }}/devcontainer-linux:${{ needs.necessary.outputs.devcontainer-tag }}-${{ matrix.platform }}
 
   manifest:
