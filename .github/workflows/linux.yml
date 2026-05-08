@@ -13,13 +13,16 @@ on:
         default: latest
         required: false
         type: string
-
 jobs:
   build-and-run-linux:
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04, raspberrypi-runner]
     name: Build and Run
-    runs-on: ubuntu-24.04
+    runs-on: ${{matrix.runner}}
     container:
       image: ghcr.io/${{ github.repository }}/devcontainer-linux:${{ inputs.devcontainer-tag }}
+      options: ${{matrix.options}}
     steps:
       - name: Clean other workspace
         run: rm -rf ../.west
