@@ -11,7 +11,7 @@ set(CMAKE_C_FLAGS
     "-fprofile-instr-generate -fcoverage-mapping"
 )
 
-project(OcreTestSourceCoverage)
+project(OcreTestSourceCoverage LANGUAGES C)
 
 add_subdirectory(../system/posix OcreSystemTests)
 

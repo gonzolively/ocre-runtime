@@ -11,7 +11,7 @@ string(APPEND CMAKE_C_FLAGS
     "-fsanitize=address"
 )
 
-project(OcreLeaksCheckPosix)
+project(OcreLeaksCheckPosix LANGUAGES C)
 
 add_subdirectory(../system/posix OcreSystemTests)
 

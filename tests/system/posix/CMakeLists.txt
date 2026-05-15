@@ -21,7 +21,7 @@ if (SANITIZER)
 )
 endif()
 
-project(OcreSystemTestPosix)
+project(OcreSystemTestPosix LANGUAGES C)
 
 add_subdirectory(../../.. ocre)
 
