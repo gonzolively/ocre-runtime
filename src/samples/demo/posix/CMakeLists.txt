@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
-project (ocre_sample_demo)
+project (ocre_sample_demo LANGUAGES C)
 
 add_executable(ocre_demo
     ../main.c
